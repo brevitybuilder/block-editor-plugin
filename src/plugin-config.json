@@ -1,0 +1,78 @@
+{
+  "id": "blocknote",
+  "name": "BlockNote",
+  "description": "A plugin to use BlockNote library",
+  "private": true,
+  "publicProps": [],
+  "privateProps": [],
+  "schemas": [],
+  "blocks": [
+    {
+      "name": "BlockNote",
+      "entrypoint": "./blocks/BlockNote/index.tsx",
+      "acceptsChildren": false,
+      "category": "Data",
+      "props": [
+        {
+          "label": "Initial Value",
+          "name": "defaultValue",
+          "type": { "kind": "text", "isDynamic": true },
+          "default": "",
+          "placeholder": "...",
+          "help": "default value for the editor"
+        },
+        {
+          "label": "Placeholder",
+          "name": "placeholder",
+          "type": { "kind": "text" },
+          "default": "Enter some text...",
+          "placeholder": "Enter some text...",
+          "help": "The placeholder text to display"
+        },
+        {
+          "label": "Theme",
+          "name": "theme",
+          "type": { "kind": "select" },
+          "default": "snow",
+          "options": [
+            { "label": "Snow (default)", "value": "snow" },
+            { "label": "Bubble", "value": "bubble" }
+          ],
+          "placeholder": "",
+          "help": "The theme of the editor"
+        },
+        {
+          "label": "Is Read Only",
+          "name": "readOnly",
+          "type": { "kind": "boolean", "isDynamic": true },
+          "default": false,
+          "placeholder": "",
+          "help": "Whether the input is read-only"
+        }
+      ],
+      "events": [
+        {
+          "label": "When changed",
+          "name": "onTextChange",
+          "help": "Select an action to run when input's value has changed"
+        }
+      ],
+      "defaultStyles": {
+        "": {}
+      },
+      "sources": [
+        {
+          "id": "value",
+          "name": "{{= it.component.name }}'s current value",
+          "provider": "StateProvider",
+          "description": "The current value of the input",
+          "template": "$get('{{= it.component.id}}', { value: {{= it.stringify(it.component.props.defaultValue) }} ?? '' }).value",
+          "instanceTemplate": "{{= it.component.name }}'s current value",
+          "outputType": { "kind": "text" }
+        }
+      ],
+      "actions": []
+    }
+  ],
+  "serverActions": []
+}
