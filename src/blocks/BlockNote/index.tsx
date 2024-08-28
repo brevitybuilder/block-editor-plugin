@@ -1,19 +1,27 @@
-import { BlockNoteView } from "@blocknote/mantine";
-import "@blocknote/mantine/style.css";
-import { useCreateBlockNote } from "@blocknote/react";
+import React, { useEffect, useRef } from 'react';
+import EditorJS from '@editorjs/editorjs';
+import Header from '@editorjs/header';
+import List from '@editorjs/list';
+import Image from '@editorjs/image';
+import Paragraph from '@editorjs/paragraph';
+import Embed from '@editorjs/embed';
+import Table from '@editorjs/table';
+import Quote from '@editorjs/quote';
+import Marker from '@editorjs/marker';
+import CodeTool from '@editorjs/code';
+import LinkTool from '@editorjs/link';
 import { clsx, useGetKey, useGetSet } from "@brevity-builder/react";
-import { HTMLAttributes, forwardRef, useEffect, useMemo } from "react";
 
-export type BlockNoteProps = {
+export type EditorProps = {
   placeholder?: string;
   readOnly?: boolean;
   defaultValue?: string;
   onTextChange: (text: string) => void;
   className?: string;
-} & HTMLAttributes<HTMLDivElement>;
+} & React.HTMLAttributes<HTMLDivElement>;
 
 // Editor is an uncontrolled React component
-export const BlockNote = forwardRef(
+export const BlockNote = React.forwardRef(
   (
     {
       readOnly,
@@ -21,63 +29,61 @@ export const BlockNote = forwardRef(
       onTextChange,
       className,
       placeholder,
-
       ...props
-    }: BlockNoteProps,
-    ref,
+    },
+    ref
   ) => {
+    const editorRef = useRef<EditorJS>();
     const key = useGetKey(props);
-    const initialValue = useMemo(
-      () => ({ value: defaultValue as string }),
-      [defaultValue],
-    );
-    const [_, setState] = useGetSet<{
-      value: string;
-    }>(key, initialValue);
-
-    const editor = useCreateBlockNote({
-      uploadFile: async (file: File) => {
-        const headers = {};
-        if (file.type.startsWith("image/")) {
-          const { width, height } = await getImageSize(file);
-          headers["X-Image-Width"] = width.toString();
-          headers["X-Image-Height"] = height.toString();
-        }
-        const response = await fetch(`/api/upload/public/${file.name}`, {
-          method: "PUT",
-          headers,
-          body: file,
-        });
-
-        if (!response.ok) {
-          throw await response.text();
-        }
-        const devizeFile = await response.json();
-        return devizeFile.src;
-      },
-    });
+    const [_, setState] = useGetSet<{ value: string }>(key, { value: defaultValue || '' });
 
     useEffect(() => {
-      async function loadInitialHTML() {
-        const blocks = await editor.tryParseHTMLToBlocks(defaultValue);
-        editor.replaceBlocks(editor.document, blocks);
-      }
-      loadInitialHTML();
-    }, [editor]);
-
-    return (
-      <div className={clsx("quill", className)} {...props}>
-        <BlockNoteView
-          editor={editor}
-          onChange={async () => {
-            const html = await editor.blocksToFullHTML(editor.document);
+      if (!editorRef.current) {
+        editorRef.current = new EditorJS({
+          holder: 'editorjs',
+          placeholder: placeholder || 'Start writing...',
+          readOnly: readOnly,
+          tools: {
+            header: Header,
+            paragraph: Paragraph,
+            list: List,
+            image: {
+              class: Image,
+              config: {
+                uploader: {
+                  uploadByFile: upload,
+                },
+              },
+            },
+            embed: Embed,
+            table: Table,
+            quote: Quote,
+            marker: Marker,
+            code: CodeTool,
+            linkTool: LinkTool,
+          },
+          data: undefined,
+          onChange: async () => {
+            const content = await editorRef.current?.save();
+            const html = JSON.stringify(content);
             onTextChange(html);
             setState({ value: html });
-          }}
-        />
+          },
+        });
+      }
+
+      return () => {
+        editorRef.current?.destroy();
+        editorRef.current = undefined;
+      };
+    }, []);
+
+    return (
+      <div ref={ref} className={clsx("editor-js", className)} {...props}>
+        <div id="editorjs" />
       </div>
     );
-  },
+  }
 );
 
 BlockNote.displayName = "Editor";
@@ -96,4 +102,24 @@ function getImageSize(file: File): Promise<Dimensions> {
     img.onerror = reject;
     img.src = URL.createObjectURL(file);
   });
+}
+
+const upload = async (file: File) => {
+  const headers = {};
+  if (file.type.startsWith("image/")) {
+    const { width, height } = await getImageSize(file);
+    headers["X-Image-Width"] = width.toString();
+    headers["X-Image-Height"] = height.toString();
+  }
+  const response = await fetch(`/api/upload/public/${file.name}`, {
+    method: "PUT",
+    headers,
+    body: file,
+  });
+
+  if (!response.ok) {
+    throw await response.text();
+  }
+  const devizeFile = await response.json();
+  return devizeFile.src;
 }
