@@ -8,8 +8,8 @@
   "schemas": [],
   "blocks": [
     {
-      "name": "BlockNote",
-      "entrypoint": "./blocks/BlockNote/index.tsx",
+      "name": "Block",
+      "entrypoint": "./blocks/Block/index.tsx",
       "acceptsChildren": false,
       "category": "Data",
       "props": [
@@ -28,18 +28,6 @@
           "default": "Enter some text...",
           "placeholder": "Enter some text...",
           "help": "The placeholder text to display"
-        },
-        {
-          "label": "Theme",
-          "name": "theme",
-          "type": { "kind": "select" },
-          "default": "snow",
-          "options": [
-            { "label": "Snow (default)", "value": "snow" },
-            { "label": "Bubble", "value": "bubble" }
-          ],
-          "placeholder": "",
-          "help": "The theme of the editor"
         },
         {
           "label": "Is Read Only",

@@ -1,0 +1,131 @@
+.blockContainer {
+  margin-bottom: 8px;
+}
+
+.blockContent {
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.blockContent h1 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: 0.5em 0;
+}
+
+.blockContent h2 {
+  font-size: 1.3em;
+  font-weight: bold;
+  margin: 0.5em 0;
+}
+
+.blockContent ul {
+  margin: 0.5em 0;
+  padding-left: 1.5em;
+}
+
+.blockContent li {
+  margin: 0.2em 0;
+}
+
+.commandMenu {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.commandItem {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.commandItem:hover {
+  background-color: #f0f0f0;
+}
+
+.elementMenu {
+  position: absolute;
+  left: -48px;
+  top: -2px;
+  width: 46px;
+  visibility: hidden;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.element {
+  position: relative;
+}
+.element:hover .elementMenu {
+  visibility: visible;
+}
+
+.popoverContent {
+  background-color: white;
+  border-radius: 6px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  width: 200px;
+  z-index: 300;
+}
+
+.popoverList {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.popoverList li {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.popoverList li:hover {
+  background-color: #f0f0f0;
+}
+
+.icon {
+  margin-right: 10px;
+  font-size: 1.2em;
+}
+
+.addButton {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.addButton:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.dragHandle {
+  width: 18px;
+  height: 24px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.dragHandle:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
