@@ -42,7 +42,8 @@
         {
           "label": "When changed",
           "name": "onTextChange",
-          "help": "Select an action to run when input's value has changed"
+          "help": "Select an action to run when input's value has changed",
+          "offerDebounce": true
         }
       ],
       "defaultStyles": {

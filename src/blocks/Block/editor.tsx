@@ -1,8 +1,18 @@
+import {
+  BlockNoteSchema,
+  defaultInlineContentSpecs,
+  filterSuggestionItems,
+} from "@blocknote/core";
 import { BlockNoteView } from "@blocknote/mantine";
 import "@blocknote/mantine/style.css";
-import { useCreateBlockNote } from "@blocknote/react";
+import {
+  DefaultReactSuggestionItem,
+  SuggestionMenuController,
+  useCreateBlockNote,
+} from "@blocknote/react";
 import { useGetKey, useGetSet } from "@brevity-builder/react";
 import { useEffect, useMemo } from "react";
+import { useMention } from "./mention";
 
 async function uploadFile(file: File) {
   const headers = {};
@@ -46,14 +56,70 @@ function getImageSize(file: File): Promise<Dimensions> {
   });
 }
 
-export default function Block({ readOnly, defaultValue, ...props }: any) {
+const getMentionMenuItems = (
+  editor: typeof schema.BlockNoteEditor,
+  users: user[],
+): DefaultReactSuggestionItem[] => {
+  return users.map((user) => ({
+    title: `${user.given_name} ${user.family_name}`,
+    subtext: user.email,
+    key: user.email,
+    onItemClick: () => {
+      editor.insertInlineContent([
+        {
+          type: "mention",
+          props: {
+            user: user.email,
+            userId: user.id,
+          },
+        },
+        " ", // add a space after the mention
+      ]);
+    },
+  }));
+};
+
+type user = {
+  email: string;
+  given_name: string;
+  family_name: string;
+  profile_image_url: {
+    src: string | null;
+  };
+  id: string;
+};
+export default function Block({
+  readOnly,
+  defaultValue,
+  users = [],
+  onTextChange,
+  ...props
+}: {
+  readOnly: boolean;
+  defaultValue: string;
+  users: user[];
+  onTextChange: (value: any) => void;
+}) {
+  const Mention = useMention(users);
   const key = useGetKey(props);
   const initialValue = useMemo(
     () => ({ value: defaultValue as string }),
     [defaultValue],
   );
 
+  const schema = useMemo(() => {
+    return BlockNoteSchema.create({
+      inlineContentSpecs: {
+        // Adds all default inline content.
+        ...defaultInlineContentSpecs,
+        // Adds the mention tag.
+        mention: Mention,
+      },
+    });
+  }, []);
+
   const editor = useCreateBlockNote({
+    schema,
     uploadFile: uploadFile,
   });
 
@@ -69,17 +135,34 @@ export default function Block({ readOnly, defaultValue, ...props }: any) {
     if (defaultValue) {
       loadInitialHTML();
     }
-  }, [editor]);
+  }, [editor, defaultValue]);
 
   const onChange = async () => {
     // Converts the editor's contents from Block objects to HTML and store to state.
     const html = await editor.blocksToHTMLLossy(editor.document);
     setState({
-      value: html,
+      value: html.replaceAll("<p></p>", "<p>&nbsp;</p>"),
     });
+    console.log(html);
+    if (onTextChange) {
+      onTextChange(html);
+    }
   };
 
   return (
-    <BlockNoteView editor={editor} editable={!readOnly} onChange={onChange} />
+    <BlockNoteView
+      editor={editor}
+      editable={!readOnly}
+      theme={"light"}
+      onChange={onChange}
+    >
+      <SuggestionMenuController
+        triggerCharacter="@"
+        getItems={async (query) =>
+          // Gets the mentions menu items
+          filterSuggestionItems(getMentionMenuItems(editor, users), query)
+        }
+      />
+    </BlockNoteView>
   );
 }
