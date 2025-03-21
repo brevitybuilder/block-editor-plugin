@@ -1,0 +1,21 @@
+.mentionSuggestions {
+  background: white;
+  padding: 8px 0px;
+  box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.user {
+  padding: 4px 12px;
+}
+
+.user:hover {
+  background-color: #fafafa;
+}
+
+.mentions textarea {
+  outline: none;
+}

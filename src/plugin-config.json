@@ -22,6 +22,14 @@
           "help": "default value for the editor"
         },
         {
+          "label": "Update key",
+          "name": "updateKey",
+          "type": { "kind": "text", "isDynamic": true },
+          "default": "",
+          "placeholder": "...",
+          "help": "When the key changes we'll update the initial value"
+        },
+        {
           "label": "Placeholder",
           "name": "placeholder",
           "type": { "kind": "text" },
@@ -36,6 +44,22 @@
           "default": false,
           "placeholder": "",
           "help": "Whether the input is read-only"
+        },
+        {
+          "label": "Hide sidemenu",
+          "name": "hideSideMenu",
+          "type": { "kind": "boolean", "isDynamic": true },
+          "default": false,
+          "placeholder": "",
+          "help": "hide the sideMenu"
+        },
+        {
+          "label": "users",
+          "name": "users",
+          "type": { "kind": "User", "isList": true },
+          "default": null,
+          "placeholder": "",
+          "help": "users to be mentioned"
         }
       ],
       "events": [
@@ -57,6 +81,90 @@
           "description": "The current value of the input",
           "template": "$get('{{= it.component.id}}', { value: {{= it.stringify(it.component.props.defaultValue) }} ?? '' }).value",
           "instanceTemplate": "{{= it.component.name }}'s current value",
+          "outputType": { "kind": "text" }
+        },
+        {
+          "id": "addedUsers",
+          "name": "{{= it.component.name }}'s mentioned users",
+          "provider": "StateProvider",
+          "description": "Newly mentioned users",
+          "template": "$get('{{= it.component.id}}', { users: {{= it.stringify(it.component.props.defaultValue) }} ?? '' }).users",
+          "instanceTemplate": "{{= it.component.name }}'s users",
+          "outputType": { "kind": "User", "isList": true }
+        }
+      ],
+      "actions": []
+    },
+    {
+      "name": "Mentions",
+      "entrypoint": "./blocks/Mentions/index.tsx",
+      "acceptsChildren": false,
+      "category": "Input",
+      "props": [
+        {
+          "label": "isRequired",
+          "name": "isRequired",
+          "type": { "kind": "boolean", "isList": false },
+          "default": false,
+          "placeholder": "",
+          "help": "Whether or not to set this is required"
+        },
+
+        {
+          "label": "users",
+          "name": "users",
+          "type": { "kind": "User", "isList": true },
+          "default": null,
+          "placeholder": "",
+          "help": "users for user column"
+        }
+      ],
+      "events": [],
+      "defaultStyles": {
+        "": {
+          "flex-grow": "0",
+          "flex-shrink": "1",
+          "flex-basis": "auto",
+          "display": "flex",
+          "flex-direction": "row",
+          "justify-content": "flex-start",
+          "align-items": "stretch",
+          "gap": "0px",
+          "width": "auto",
+          "height": "auto",
+          "min-width": "auto",
+          "min-height": "auto",
+          "max-width": "100%",
+          "max-height": "100%",
+          "padding-right": "0px",
+          "padding-left": "0px",
+          "padding-top": "0px",
+          "padding-bottom": "0px",
+          "border-color": "var(--theme-colors-gray-200)",
+          "border-radius": "0px",
+          "border-width": "0px",
+          "border-style": "solid",
+          "background-color": "transparent",
+          "box-shadow": "var(--theme-shadows-none)"
+        }
+      },
+      "sources": [
+        {
+          "id": "users",
+          "name": "{{= it.component.name }}'s mentioned users",
+          "provider": "StateProvider",
+          "description": "selectedUsers",
+          "template": "$get('{{= it.component.id}}', {users:[]})?.users",
+          "instanceTemplate": "{{= it.component.name }}'s users",
+          "outputType": { "kind": "User", "isList": true }
+        },
+        {
+          "id": "value",
+          "name": "{{= it.component.name }}'s value",
+          "provider": "StateProvider",
+          "description": "textValue",
+          "template": "$get('{{= it.component.id}}', {value:''})?.value",
+          "instanceTemplate": "{{= it.component.name }}'s value",
           "outputType": { "kind": "text" }
         }
       ],

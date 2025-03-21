@@ -21,7 +21,6 @@ export const useMention = (users: any[]) => {
           const user = users.find(
             (u) => u.id === props.inlineContent.props.userId,
           );
-          console.log(props, user);
 
           return (
             <span className="_mention" style={{ backgroundColor: "#0000000F" }}>

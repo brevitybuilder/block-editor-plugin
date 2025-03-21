@@ -16,11 +16,13 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@blocknote/core": "^0.18.0",
-    "@blocknote/mantine": "^0.18.1",
-    "@blocknote/react": "^0.18.1",
+    "@blocknote/core": "^0.22.0",
+    "@blocknote/mantine": "^0.22.0",
+    "@blocknote/react": "^0.22.0",
+    "@blocknote/xl-multi-column": "^0.22.0",
     "@brevity-builder/react": "^1.2.233",
     "clsx": "2.1.1",
+    "react-mentions": "^4.4.10",
     "use-sync-external-store": "1.2.2",
     "vitest": "^1.6.0",
     "zustand": "^4.5.6"
